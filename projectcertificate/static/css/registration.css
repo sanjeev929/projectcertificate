@@ -1,0 +1,46 @@
+.container {
+    width: 300px;
+    margin: 0 auto;
+}
+
+input[type=text], input[type=email], input[type=tel] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green */
+}
+
+/* Additional color styles */
+.error-message {
+    color: #ff0000; /* Red */
+}
+
+.success-message {
+    color: #008000; /* Green */
+}
+
+.info-message {
+    color: #0000ff; /* Blue */
+}
+
+.warning-message {
+    color: #ff7f00; /* Orange */
+}

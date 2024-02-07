@@ -1,14 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
 </head>
 <body>
-    <h2>hi</h2>
+    <div class="container">
+        <!-- Display a message indicating the recipient's name -->
+        <p>Hi {{ name }},</p>
+        <!-- Display a message indicating that the OTP has been sent to the recipient's email -->
+        <p>We have sent an OTP to {{email}} this mail. Please check your inbox and enter the OTP below.</p>
+        <!-- OTP verification form -->
+        <form method="post" action="">
+            {% csrf_token %}
+            <label for="otp">Enter OTP:</label><br>
+            <input type="text" id="otp" name="otp" required><br>
+            <button type="submit">Verify OTP</button>
+        </form>
+    </div>
 </body>
 </html>
+

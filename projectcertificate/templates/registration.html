@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>User Registration</h2>
+        <form action="/home/" method="post" >
+            {% csrf_token %}
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+            <label for="phone">Phone Number (10 digits):</label><br>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required title="Please enter a 10-digit phone number"><br>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

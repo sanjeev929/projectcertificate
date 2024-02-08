@@ -5,6 +5,7 @@ import requests
 def registartion(request):
     return render(request,'registration.html')
 def home(request):
+    
     if request.method == "POST":
         name = request.POST.get("name")
         email = request.POST.get("email")

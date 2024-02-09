@@ -15,7 +15,7 @@ def home(request):
             "email": email,
             "phone": phone
         }
-        fastapi_url = "http://192.168.143.87:8001/submit-data/"
+        fastapi_url = "http://192.168.150.87:8001/submit-data/"
         response = requests.post(fastapi_url, json=data)
         if response.status_code == 200:
             response_data = response.json()

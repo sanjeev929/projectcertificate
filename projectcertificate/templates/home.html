@@ -15,10 +15,11 @@
         {%endif%}
         <!-- Display a message indicating that the OTP has been sent to the recipient's email -->
         {%if email != None%}
-        <p>We have sent an OTP to {{email}} this mail. Please check your inbox and enter the OTP below.</p>
+        <p>We have sent an OTP to {{email}} this mail.</p>
         {%endif%}
+        <p>Please check your inbox and enter the OTP below</p>
         <!-- OTP verification form -->
-        <form method="post" action="//">
+        <form method="post" action="/verifyotp/">
             {% csrf_token %}
             <label for="otp">Enter OTP:</label><br>
             <input type="text" id="otp" name="otp" required><br>

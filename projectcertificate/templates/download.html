@@ -9,10 +9,12 @@
 </head>
 <body>
     <div class="container">
-        <p>Please click for download to your certificate</p>
+        <p>Please click to download for your certificate</p>
         <!-- OTP verification form -->
-        <form method="post" action="/verifyotp/">
+        <form method="post" action="/downloadcertificate/">
             {% csrf_token %}
+            {%email%}
+            <input type="hidden" name="email" value="{{email}}">
             <button type="submit">Download</button>
         </form>
     </div>

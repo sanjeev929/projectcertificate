@@ -29,6 +29,9 @@
             <input type="email" id="email" name="email" required><br>
             <button type="submit">Register</button>
         </form>
+        {%if error%}
+        <h2>{{error}}</h2>
+        {%endif%}
     </div>
 </body>
 </html>

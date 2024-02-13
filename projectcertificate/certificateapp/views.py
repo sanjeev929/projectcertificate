@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import requests
 
+ip="192.168.247.87"
 # Create your views here.
 def registartion(request):
     return render(request,'registration.html')
@@ -14,7 +15,7 @@ def home(request):
             "email": email,
             "phone": phone
         }
-        fastapi_url = "http://192.168.97.87:8001/submit-data/"
+        fastapi_url = f"http://{ip}:8001/submit-data/"
         response = requests.post(fastapi_url, json=data)
         if response.status_code == 200:
             response_data = response.json()
@@ -36,8 +37,27 @@ def home(request):
             }    
     return render(request, 'home.html',context)
 
-def verifyotp(request):
-    
+def otpverify(request):
+    if request.method == "POST":
+        email = request.POST.get("mail")
+        otp = request.POST.get("otp")
+        data = {
+            "email": email,
+            "otp":otp
+        }
+        fastapi_url = f"http://{ip}:8001/otpverify/"
+        response = requests.post(fastapi_url, json=data)
+        if response.status_code == 200:
+            response_data = response.json()
+            print(response_data)
+            name = response_data.get("otp status")
+            if name:
+                context={
+                    "email":email,
+                }
+                return render(request, 'download.html',context)
+            else:
+                 return render(request,'registration.html')
     return render(request, 'home.html')
 def otpgenerate(request):
     if request.method == "POST":
@@ -45,16 +65,22 @@ def otpgenerate(request):
         data = {
             "email": email
         }
-        fastapi_url = "http://192.168.97.87:8001/otpgenerate/"
+        fastapi_url = f"http://{ip}:8001/otpgenerate/"
         response = requests.post(fastapi_url, json=data)
+        print(response)
         if response.status_code == 200:
             response_data = response.json()
-            message = response_data.get("message")
-            context={
-                "name":None,
-                "email":None
-            }
-            return render(request, 'home.html')
+            print(response_data)
+            name = response_data.get("name")
+            error = response_data.get("error")
+            if name != None:
+                context={
+                    "name":name,
+                    "email":email,
+                }
+                return render(request, 'home.html',context)
+            else:
+                 return render(request,'registration.html',{"error":error})
         else:
                 context={
                 "name":None,

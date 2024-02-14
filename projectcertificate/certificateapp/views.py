@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import requests
 
 ip="192.168.21.87"
@@ -103,12 +103,77 @@ def admin(request):
         data = {
             "email": email
         }
-        fastapi_url = f"http://{ip}:8001/otpgenerate/"
+        fastapi_url = f"http://{ip}:8001/adminchnage/"
         response = requests.post(fastapi_url, json=data)
-       
-        return render(request, 'home.html')
+        fastapi_url = f"http://{ip}:8001/getall/"
+        response = requests.get(fastapi_url)
+
+        return render(request, 'admin.html')
     else:
         fastapi_url = f"http://{ip}:8001/getall/"
         response = requests.get(fastapi_url)
-        return render(request,"admin.html")
+        print(response)
+        if response.status_code == 200:
+            response_data = response.json()
+            alldata=response_data["users"]
+            names = [user['name'] for user in alldata]
+            emails = [user['email'] for user in alldata]
+            phones = [user['phone'] for user in alldata]
+            states = [user['status'] for user in alldata]
+        userdata=zip(names,emails,phones,states)
+        conetxt={
+            "userdata":userdata
+        }
+        return render(request,"admin.html",conetxt)
      
+def login(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        data = {
+            "email": email,
+            "password":password
+        }
+        fastapi_url = f"http://{ip}:8001/login/"
+        response = requests.post(fastapi_url, json=data)
+        print(response)
+        if response.status_code == 200:
+            response_data = response.json()
+            print(response_data)
+            state = response_data.get("state")
+            error = response_data.get("error")
+            if state:
+                context={
+                    "name":state,
+                    "email":email,
+                }
+                return redirect(admin)
+            else:
+                 return render(request,'login.html',{"error":error}) 
+    else:
+        return render(request, 'login.html')
+        
+def admin_registration(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        data = {
+            "name":name,
+            "email": email,
+            "password":password
+        }
+        fastapi_url = f"http://{ip}:8001/admin_registration/"
+        response = requests.post(fastapi_url, json=data)
+        print(response)
+        if response.status_code == 200:
+            response_data = response.json()
+            print(response_data)
+            state = response_data.get("state")
+            error = response_data.get("error")
+            if state:
+                return render(request, 'login.html')
+            else:
+                 return render(request,'admin_registration.html',{"error":error}) 
+    else:
+        return render(request, 'admin_registration.html')

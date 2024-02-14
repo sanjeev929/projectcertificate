@@ -16,18 +16,20 @@
                     <th>Name</th>
                     <th>Phone</th>
                     <th>State</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user in users %}
+                {% for names,emails,phones,states in userdata%}
                 <tr>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.phone }}</td>
+                    <td>{{ names }}</td>
+                    <td>{{ phones }}</td>
+                    <td>{{ states }}</td>
                     <td>
-                        <form method="post" action="/update-state/">
+                        <form method="post" action="/adminchange/">
                             {% csrf_token %}
-                            <input type="hidden" name="email" value="{{ user.id }}">
-                            <input type="hidden" name="state" value="{{ user.state }}">
+                            <input type="hidden" name="email" value="{{ emails}}">
+                            <input type="hidden" name="state" value="{{ states }}">
                             <button type="submit">Change State</button>
                         </form>
                     </td>

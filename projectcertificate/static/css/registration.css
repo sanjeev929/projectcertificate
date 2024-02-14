@@ -44,3 +44,39 @@ button:hover {
 .warning-message {
     color: #ff7f00; /* Orange */
 }
+.container {
+    margin: 20px auto;
+    max-width: 800px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #f2f2f2;
+}
+tr:hover {
+    background-color: #f5f5f5;
+}
+td select {
+    width: 100px;
+    padding: 8px;
+    border-radius: 4px;
+}
+td button {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+td button:hover {
+    background-color: #45a049;
+}

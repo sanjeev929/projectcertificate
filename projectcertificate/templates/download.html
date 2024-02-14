@@ -13,9 +13,10 @@
         <!-- OTP verification form -->
         <form method="post" action="/downloadcertificate/">
             {% csrf_token %}
-            {%email%}
+            {%if email%}
             <input type="hidden" name="email" value="{{email}}">
             <button type="submit">Download</button>
+            {%endif%}
         </form>
     </div>
 </body>

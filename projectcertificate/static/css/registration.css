@@ -80,3 +80,11 @@ td button {
 td button:hover {
     background-color: #45a049;
 }
+.green {
+    color: green;
+}
+
+/* Define the style for the red class */
+.red {
+    color: red;
+}

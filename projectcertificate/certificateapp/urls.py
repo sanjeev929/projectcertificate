@@ -8,5 +8,6 @@ urlpatterns=[
     path('home/',views.home,name='home'),
     path('otpverify/',views.otpverify,name='otpverify'),
     path('otpgenerate/',views.otpgenerate,name='otpgenerate'),
-    path('admin/',views.admin,name='admin')
+    path('admin/',views.admin,name='admin'),
+    path('downloadcertificate/',views.downloadcertificate,name='downloadcertificate')
 ]

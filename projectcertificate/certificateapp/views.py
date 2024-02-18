@@ -1,7 +1,9 @@
 from django.shortcuts import render,redirect
 import requests
+from django.http import HttpResponse
 
-ip="192.168.21.87"
+
+ip="192.168.60.87"
 # Create your views here.
 def registartion(request):
     return render(request,'registration.html')
@@ -100,27 +102,43 @@ def otpgenerate(request):
 def admin(request):
     if request.method == "POST":
         email = request.POST.get("email")
+        statechange=request.POST.get("statechange")
+        print(statechange)
         data = {
-            "email": email
+            "email": email,
+            "status":statechange
         }
-        fastapi_url = f"http://{ip}:8001/adminchnage/"
+        fastapi_url = f"http://{ip}:8001/adminchange/"
         response = requests.post(fastapi_url, json=data)
         fastapi_url = f"http://{ip}:8001/getall/"
         response = requests.get(fastapi_url)
-
-        return render(request, 'admin.html')
+        print(response)
+        if response.status_code == 200:
+            response_data = response.json()
+            # print(response_data)
+            # alldata=response_data["users"]
+            names = [user['name'] for user in response_data]
+            emails = [user['email'] for user in response_data]
+            phones = [user['phone'] for user in response_data]
+            states = [user['status'] for user in response_data]
+            userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+            conetxt={
+                "userdata":userdata
+            }
+            return render(request,"admin.html",conetxt)
     else:
         fastapi_url = f"http://{ip}:8001/getall/"
         response = requests.get(fastapi_url)
         print(response)
         if response.status_code == 200:
             response_data = response.json()
-            alldata=response_data["users"]
-            names = [user['name'] for user in alldata]
-            emails = [user['email'] for user in alldata]
-            phones = [user['phone'] for user in alldata]
-            states = [user['status'] for user in alldata]
-        userdata=zip(names,emails,phones,states)
+            # print(response_data)
+            # alldata=response_data["users"]
+            names = [user['name'] for user in response_data]
+            emails = [user['email'] for user in response_data]
+            phones = [user['phone'] for user in response_data]
+            states = [user['status'] for user in response_data]
+        userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
         conetxt={
             "userdata":userdata
         }
@@ -177,3 +195,38 @@ def admin_registration(request):
                  return render(request,'admin_registration.html',{"error":error}) 
     else:
         return render(request, 'admin_registration.html')
+
+def downloadcertificate(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        data = {
+            "email": email
+        }
+        fastapi_url = f"http://{ip}:8001/downloadcertificate/"
+        response = requests.post(fastapi_url, json=data)
+        print(response)
+        if response.status_code == 200:
+            certificate_data = response.content
+            print(response.content)
+            # Set the response content type to 'application/pdf'
+            response = HttpResponse(certificate_data, content_type='application/pdf')
+            
+            # Remove the .crdownload extension from the filename, if present
+            filename = "certificate.pdf"
+            if filename.endswith('.crdownload'):
+                filename = filename[:-len('.crdownload')]
+
+            # Set the Content-Disposition header to force download and provide the modified filename
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+            # Add additional security headers
+            response['X-Content-Type-Options'] = 'nosniff'
+            response['X-Frame-Options'] = 'deny'
+            response['Content-Security-Policy'] = "default-src 'self'"
+
+            return response
+        else:
+            return render(request, 'admin_registration.html', {"error": f"Server returned status code {response.status_code}."})
+    else:
+        return render(request, 'admin_registration.html')
+       

@@ -3,7 +3,7 @@ import requests
 from django.http import HttpResponse
 
 
-ip="192.168.60.87"
+ip="192.168.150.87"
 # Create your views here.
 def registartion(request):
     return render(request,'registration.html')

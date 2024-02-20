@@ -9,5 +9,6 @@ urlpatterns=[
     path('otpverify/',views.otpverify,name='otpverify'),
     path('otpgenerate/',views.otpgenerate,name='otpgenerate'),
     path('admin/',views.admin,name='admin'),
-    path('downloadcertificate/',views.downloadcertificate,name='downloadcertificate')
+    path('downloadcertificate/',views.downloadcertificate,name='downloadcertificate'),
+    path('verify_recaptcha/',views.verify_recaptcha,name='verify_recaptcha/')
 ]

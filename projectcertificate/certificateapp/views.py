@@ -1,12 +1,30 @@
 from django.shortcuts import render,redirect
 import requests
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 
-ip="192.168.150.87"
+ip="192.168.129.87"
 # Create your views here.
 def registartion(request):
     return render(request,'registration.html')
+
+def verify_recaptcha(request):
+    recaptcha_response = request.POST.get("recaptchaResponse")
+    secret_key = "6Le9jncpAAAAAPYWAaCJCwjtORLoZFH-cJ6KY1aX"
+    try:
+    # Send a GET request to Google's reCAPTCHA verification endpoint
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={"secret": secret_key, "response": recaptcha_response}
+        )
+        data = response.json()
+        print(data)
+    except Exception as e:
+        print(e)   
+    # Return JSON response based on reCAPTCHA verification result
+    return JsonResponse(data)
+
 def home(request):
     if request.method == "POST":
         name = request.POST.get("name")

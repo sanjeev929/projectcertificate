@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +7,6 @@
     <title>User Registration</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
 </head>
 <body>
     <div class="container">
@@ -21,8 +19,9 @@
             <input type="email" id="email" name="email" required><br>
             <label for="phone">Phone Number (10 digits):</label><br>
             <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required title="Please enter a 10-digit phone number"><br>
-            <div class="g-recaptcha" data-sitekey="6Le9jncpAAAAAJ3K-xYKzcQ69SdHwUZmDbxkl0wG"></div>
-            <button type="submit">Register</button>
+            <div class="g-recaptcha" data-sitekey="6Le9jncpAAAAAJ3K-xYKzcQ69SdHwUZmDbxkl0wG" data-callback="onSubmit"></div>
+            <input type="hidden" id="recaptchaResponse" name="recaptchaResponse"> <!-- Hidden input to store reCAPTCHA response -->
+            <button type="button" onclick="submitForm()">Register</button>
         </form>
     </div>
     <div class="container">
@@ -33,51 +32,38 @@
             <input type="email" id="email" name="email" required><br>
             <button type="submit">Register</button>
         </form>
-        {%if error%}
-        <h2>{{error}}</h2>
-        {%endif%}
+        {% if error %}
+        <h2>{{ error }}</h2>
+        {% endif %}
     </div>
 <script>
-    function submitForm() {
-    var recaptcha_response = grecaptcha.getResponse();
-    if (recaptcha_response.length == 0) {
-        alert("Please complete the reCAPTCHA");
-        return false;
+    function onSubmit(token) {
+        document.getElementById("recaptchaResponse").value = token;
     }
-    
-    // Verify reCAPTCHA response
-    var xhr = new XMLHttpRequest();
-    var url = "https://www.google.com/recaptcha/api/siteverify";
-    var params = "secret=6Le9jncpAAAAAPYWAaCJCwjtORLoZFH-cJ6KY1aX&response=" + recaptcha_response;
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                    // reCAPTCHA validation succeeded, form submission will continue
-                    document.getElementById("myForm").submit();
-                } else {
-                    // reCAPTCHA validation failed
-                    alert("reCAPTCHA verification failed. Please try again.");
-                    grecaptcha.reset();
-                }
+
+    function submitForm() {
+        console.log("point1");
+        var formData = new FormData(document.getElementById("myForm"));
+        console.log("point2");
+        fetch("/verify_recaptcha/", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("data", data);
+            if (data.success) {
+                document.getElementById("myForm").submit(); // Submit the form if reCAPTCHA verification succeeds
             } else {
-                // Error handling for failed AJAX request
-                alert("Error: Failed to verify reCAPTCHA response. Please try again later.");
-                console.error("Error status:", xhr.status);
+                alert("reCAPTCHA verification failed. Please try again.");
+                grecaptcha.reset(); // Reset reCAPTCHA widget
             }
-        }
-    };
-    xhr.onerror = function() {
-        // Error handling for network errors
-        alert("Error: Network error occurred while verifying reCAPTCHA response. Please check your internet connection.");
-        console.error("Network error occurred");
-    };
-    xhr.send(params);
-    return false; // Prevent the form from submitting normally
-}
-</script>    
+        })
+        .catch(error => {
+            console.log("Error:", error);
+            alert("An error occurred while verifying reCAPTCHA. Please try again later.");
+        });
+    }
+</script>
 </body>
 </html>

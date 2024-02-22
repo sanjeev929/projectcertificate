@@ -2,9 +2,14 @@ from django.shortcuts import render,redirect
 import requests
 from django.http import HttpResponse
 from django.http import JsonResponse
+import socket
 
-
-ip="192.168.129.87"
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))  # Connecting to a public IP address to get the local IP
+ip_address = s.getsockname()[0]
+print(ip_address)
+s.close()
+ip=ip_address
 # Create your views here.
 def registartion(request):
     return render(request,'registration.html')

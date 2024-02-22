@@ -45,9 +45,9 @@ def home(request):
             error = response_data.get("error")
             if error:
                 context={
-                    "error":"Email is already register!!!!"
+                    "emailcheckexist":"Email is already register!!!!"
                 }
-                return render(request, 'home.html',context)
+                return render(request, 'registration.html',context)
             else:
                 context={
                     "name":name,

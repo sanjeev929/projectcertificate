@@ -22,6 +22,9 @@
             <div class="g-recaptcha" data-sitekey="6Le9jncpAAAAAJ3K-xYKzcQ69SdHwUZmDbxkl0wG" data-callback="onSubmit"></div>
             <input type="hidden" id="recaptchaResponse" name="recaptchaResponse"> <!-- Hidden input to store reCAPTCHA response -->
             <button type="button" onclick="submitForm()">Register</button>
+            {%if emailcheckexist%}
+            <p>{{emailcheckexist}}</p>
+            {%endif%}
         </form>
     </div>
     <div class="container">

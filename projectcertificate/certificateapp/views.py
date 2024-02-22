@@ -7,7 +7,6 @@ import socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))  # Connecting to a public IP address to get the local IP
 ip_address = s.getsockname()[0]
-print(ip_address)
 s.close()
 ip=ip_address
 # Create your views here.
@@ -24,9 +23,8 @@ def verify_recaptcha(request):
             data={"secret": secret_key, "response": recaptcha_response}
         )
         data = response.json()
-        print(data)
     except Exception as e:
-        print(e)   
+        pass   
     # Return JSON response based on reCAPTCHA verification result
     return JsonResponse(data)
 
@@ -74,7 +72,6 @@ def otpverify(request):
         response = requests.post(fastapi_url, json=data)
         if response.status_code == 200:
             response_data = response.json()
-            print(response_data)
             otp_status = response_data.get("otp status")
             name = response_data.get("name")
             if otp_status:
@@ -100,10 +97,8 @@ def otpgenerate(request):
         }
         fastapi_url = f"http://{ip}:8001/otpgenerate/"
         response = requests.post(fastapi_url, json=data)
-        print(response)
         if response.status_code == 200:
             response_data = response.json()
-            print(response_data)
             name = response_data.get("name")
             error = response_data.get("error")
             if name != None:
@@ -126,7 +121,6 @@ def admin(request):
     if request.method == "POST":
         email = request.POST.get("email")
         statechange=request.POST.get("statechange")
-        print(statechange)
         data = {
             "email": email,
             "status":statechange
@@ -135,7 +129,6 @@ def admin(request):
         response = requests.post(fastapi_url, json=data)
         fastapi_url = f"http://{ip}:8001/getall/"
         response = requests.get(fastapi_url)
-        print(response)
         if response.status_code == 200:
             response_data = response.json()
             # print(response_data)
@@ -152,7 +145,6 @@ def admin(request):
     else:
         fastapi_url = f"http://{ip}:8001/getall/"
         response = requests.get(fastapi_url)
-        print(response)
         if response.status_code == 200:
             response_data = response.json()
             # print(response_data)
@@ -177,10 +169,8 @@ def login(request):
         }
         fastapi_url = f"http://{ip}:8001/login/"
         response = requests.post(fastapi_url, json=data)
-        print(response)
         if response.status_code == 200:
             response_data = response.json()
-            print(response_data)
             state = response_data.get("state")
             error = response_data.get("error")
             if state:
@@ -206,10 +196,8 @@ def admin_registration(request):
         }
         fastapi_url = f"http://{ip}:8001/admin_registration/"
         response = requests.post(fastapi_url, json=data)
-        print(response)
         if response.status_code == 200:
             response_data = response.json()
-            print(response_data)
             state = response_data.get("state")
             error = response_data.get("error")
             if state:
@@ -227,10 +215,8 @@ def downloadcertificate(request):
         }
         fastapi_url = f"http://{ip}:8001/downloadcertificate/"
         response = requests.post(fastapi_url, json=data)
-        print(response)
         if response.status_code == 200:
             certificate_data = response.content
-            print(response.content)
             # Set the response content type to 'application/pdf'
             response = HttpResponse(certificate_data, content_type='application/pdf')
             

@@ -42,23 +42,21 @@ def home(request):
         response = requests.post(fastapi_url, json=data)
         if response.status_code == 200:
             response_data = response.json()
-            message = response_data.get("message")
-            context={
-                "name":name,
-                "email":email
-            }
+            error = response_data.get("error")
+            if error:
+                context={
+                    "error":"Email is already register!!!!"
+                }
+                return render(request, 'home.html',context)
+            else:
+                context={
+                    "name":name,
+                    "email":email
+                }
             return render(request, 'home.html',context)
         else:
-                context={
-                "name":None,
-                "email":None
-            }
-        return render(request, 'home.html',context)
-    context={
-                "name":None,
-                "email":None
-            }    
-    return render(request, 'home.html',context)
+            return render(request, 'registration.html')
+    return render(request, 'registration.html')
 
 def otpverify(request):
     if request.method == "POST":

@@ -8,28 +8,39 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body>
+<body oncontextmenu="return false;">
     <div class="container">
-        <h2>User Registration</h2>
-        <form id="myForm" action="/home/" method="post" onsubmit="return submitForm();">
+        <center><h2>Register your details</h2></center>
+        <form id="myForm" action="/home/" method="post" onsubmit="return validateForm();">
             {% csrf_token %}
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name" required><br>
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" required><br>
-            <label for="phone">Phone Number (10 digits):</label><br>
-            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required title="Please enter a 10-digit phone number"><br>
+            <div class="form-group">
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number (10 digits):</label><br>
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required title="Please enter a 10-digit phone number">
+            </div>
             <div class="g-recaptcha" data-sitekey="6Le9jncpAAAAAJ3K-xYKzcQ69SdHwUZmDbxkl0wG" data-callback="onSubmit"></div>
             <input type="hidden" id="recaptchaResponse" name="recaptchaResponse"> <!-- Hidden input to store reCAPTCHA response -->
             <button type="button" onclick="submitForm()">Register</button>
         </form>
     </div>
+    <br>
+
     <div class="container">
+        <p>If you already registered, give your Email to get OTP</p>
         <h2>OTP Verification</h2>
         <form action="/otpgenerate/" method="post" >
             {% csrf_token %}
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" required><br>
+            <div class="form-group">
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required>
+            </div>
             <button type="submit">Register</button>
         </form>
         {% if error %}
@@ -37,32 +48,58 @@
         {% endif %}
     </div>
 <script>
+    function validateForm() {
+        var name = document.getElementById("name").value;
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phone").value;
+        
+        // Email format validation
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("Please enter a valid email address.");
+            return false;
+        }
+        
+        // Phone number length validation
+        if (phone.length !== 10) {
+            alert("Please enter a 10-digit phone number.");
+            return false;
+        }
+
+        // Check if any required field is empty
+        if (name.trim() == '' || email.trim() == '' || phone.trim() == '') {
+            alert("Please fill out all required fields.");
+            return false;
+        }
+        
+        return true;
+    }
+
     function onSubmit(token) {
         document.getElementById("recaptchaResponse").value = token;
     }
 
     function submitForm() {
-        console.log("point1");
-        var formData = new FormData(document.getElementById("myForm"));
-        console.log("point2");
-        fetch("/verify_recaptcha/", {
-            method: "POST",
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("data", data);
-            if (data.success) {
-                document.getElementById("myForm").submit(); // Submit the form if reCAPTCHA verification succeeds
-            } else {
-                alert("reCAPTCHA verification failed. Please try again.");
-                grecaptcha.reset(); // Reset reCAPTCHA widget
-            }
-        })
-        .catch(error => {
-            console.log("Error:", error);
-            alert("An error occurred while verifying reCAPTCHA. Please try again later.");
-        });
+        if (validateForm()) {
+            var formData = new FormData(document.getElementById("myForm"));
+            fetch("/verify_recaptcha/", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("myForm").submit(); // Submit the form if reCAPTCHA verification succeeds
+                } else {
+                    alert("reCAPTCHA verification failed. Please try again.");
+                    grecaptcha.reset(); // Reset reCAPTCHA widget
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while verifying reCAPTCHA. Please try again later.");
+            });
+        }
     }
 </script>
 </body>

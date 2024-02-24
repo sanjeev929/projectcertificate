@@ -73,16 +73,18 @@ def otpverify(request):
         if response.status_code == 200:
             response_data = response.json()
             otp_status = response_data.get("otp status")
-            name = response_data.get("name")
+            current_user = response_data.get("current_user")
             if otp_status:
                 context={
-                    "name":name,
+                    "name":current_user['name'],
                     "email":email,
+                    "status":current_user['status'],
+                    "date":current_user['issue_date']
                 }
                 return render(request, 'download.html',context)
             else:
                  context={
-                    "name":name,
+                    "name":current_user['name'],
                     "email":email,
                     "error":"OTP is not valid"
                 }

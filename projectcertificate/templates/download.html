@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <p>Please click to download for your certificate</p>
+        <p>Please click for download your certificate</p>
         <!-- OTP verification form -->
         <form method="post" action="/downloadcertificate/">
             {% csrf_token %}
@@ -18,6 +18,30 @@
             <button type="submit">Download</button>
             {%endif%}
         </form>
+
+        <table class="certificate-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{name}}</td>
+                    {%if status == "true"%}
+                    <td>POSITIVE</td>
+                    {%else%}
+                    <td>NEGATIVE</td>
+                    {%endif%}
+                    <td>{{date}}</td>
+                    
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
     </div>
 </body>
 </html>

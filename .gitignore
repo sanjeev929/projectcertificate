@@ -292,6 +292,7 @@ celerybeat.pid
 .env
 .venv
 certificateenv/
+assets/
 venv/
 ENV/
 env.bak/

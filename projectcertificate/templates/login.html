@@ -8,8 +8,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
 </head>
 <body>
+    <br>
     <div class="container">
-        <h2>Admin Login</h2>
+        <center><h2>Admin Login</h2></center>
         <form action="/login/" method="post" >
             {% csrf_token %}
             <label for="email">Email:</label><br>

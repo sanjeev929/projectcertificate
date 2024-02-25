@@ -17,49 +17,53 @@
                     <th>Phone</th>
                     <th>State</th>
                     <th>Action</th>
+                    <th>Delete User</th>
                 </tr>
             </thead>
             <tbody>
-                {% for names,emails,phones,states in userdata%}
-                <tr>
-                    <td>{{ names }}</td>
-                    <td>{{ phones }}</td>
-                    {% if states == "true" %}
-                    <td style="color: rgb(243, 19, 19);">Positive</td>
-                    {% elif states == "false"  %}
-                    <td style="color: rgb(30, 184, 6);">Negative</td>
-                    {%else%}
-                    <td>{{ states }}</td>
-                    {% endif %}
-                    <td>
-                        {%if states == None%}
-                        <form method="post" action="/admin/">
-                            {% csrf_token %}
-                            <input type="hidden" name="email" value="{{ emails}}">
-                            <input type="hidden" name="state" value="{{ states }}">
-                            <button style="background-color: rgb(243, 19, 19); color: white;" type="submit" name="statechange" value="true">Positive</button>
-                            <button style="background-color: rgb(30, 184, 6); color: white;" type="submit" name="statechange" value="false">Negative</button>
-                        </form>
-                        {%elif states == "true"%}
-                        <form method="post" action="/admin/">
-                            {% csrf_token %}
-                            <input type="hidden" name="email" value="{{ emails}}">
-                            <input type="hidden" name="state" value="{{ states }}">
-                            <button style="background-color: rgb(30, 184, 6); color: white;" type="submit" name="statechange" value="false">Negative</button>
-                        </form>
-                        {%else%}
-                        <form method="post" action="/admin/">
-                            {% csrf_token %}
-                            <input type="hidden" name="email" value="{{ emails}}">
-                            <input type="hidden" name="state" value="{{ states }}">
-                            <button style="background-color: rgb(243, 19, 19); color: white;" type="submit" name="statechange" value="true">Positive</button>
-                        </form>
-                        {%endif%}
-                    </td>
-                </tr>
-                {% endfor %}
+                {% if userdata %}
+                    {% for names, emails, phones, states in userdata %}
+                        <tr>
+                            <td>{{ names }}</td>
+                            <td>{{ phones }}</td>
+                            {% if states == "true" %}
+                                <td style="color: rgb(243, 19, 19);">Positive</td>
+                            {% elif states == "false"  %}
+                                <td style="color: rgb(30, 184, 6);">Negative</td>
+                            {% else %}
+                                <td>{{ states }}</td>
+                            {% endif %}
+                            <td>
+                                <form method="post" action="/admin/">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="email" value="{{ emails }}">
+                                    <input type="hidden" name="state" value="{{ states }}">
+                                    {% if states == None %}
+                                        <button class="positive-button" type="submit" name="statechange" value="true">Positive</button>
+                                        <button class="negative-button" type="submit" name="statechange" value="false">Negative</button>
+                                    {% elif states == "true" %}
+                                        <button class="negative-button" type="submit" name="statechange" value="false">Negative</button>
+                                    {% else %}
+                                        <button class="positive-button" type="submit" name="statechange" value="true">Positive</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="/admin/">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="email" value="{{ emails }}">
+                                    <button class="delete-button" type="submit" value="delete" name="deleteuser">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5">No User</td> <!-- Span all columns if no user exists -->
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
 </body>
-</html>    
+</html>

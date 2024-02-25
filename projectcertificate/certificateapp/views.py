@@ -42,23 +42,29 @@ def home(request):
         response = requests.post(fastapi_url, json=data)
         if response.status_code == 200:
             response_data = response.json()
-            message = response_data.get("message")
-            context={
-                "name":name,
-                "email":email
-            }
-            return render(request, 'home.html',context)
+            error = response_data.get("error")
+            if error:
+                context={
+                    "name":name,
+                    "email":email
+                }
+                return render(request, 'home.html',context)
+            else:
+                context={
+                    "error":"email already exists"
+                }
+                return render(request, 'registration.html',context)
         else:
                 context={
                 "name":None,
                 "email":None
             }
-        return render(request, 'home.html',context)
+        return render(request, 'registration.html',context)
     context={
                 "name":None,
                 "email":None
             }    
-    return render(request, 'home.html',context)
+    return render(request, 'registration.html',context)
 
 def otpverify(request):
     if request.method == "POST":
@@ -120,6 +126,34 @@ def otpgenerate(request):
     return render(request, 'home.html')
 
 def admin(request):
+    if request.method =="POST":
+        if request.POST.get("deleteuser") == "delete":
+            email = request.POST.get("email")
+            data = {
+            "email": email,
+            }
+            fastapi_url = f"http://{ip}:8001/deleteuser/"
+            response = requests.delete(fastapi_url, json=data)
+            fastapi_url = f"http://{ip}:8001/getall/"
+            response = requests.get(fastapi_url)
+            if response.status_code == 200:
+                response_data = response.json()
+                # print(response_data)
+                # alldata=response_data["users"]
+                try:
+                    names = [user['name'] for user in response_data]
+                    emails = [user['email'] for user in response_data]
+                    phones = [user['phone'] for user in response_data]
+                    states = [user['status'] for user in response_data]
+                    userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                    conetxt={
+                        "userdata":userdata
+                    }
+                    return render(request,"admin.html",conetxt)
+                except:
+                    return render(request,"admin.html")
+            else:
+                return render(request,"admin.html")
     if request.method == "POST":
         email = request.POST.get("email")
         statechange=request.POST.get("statechange")
@@ -135,15 +169,20 @@ def admin(request):
             response_data = response.json()
             # print(response_data)
             # alldata=response_data["users"]
-            names = [user['name'] for user in response_data]
-            emails = [user['email'] for user in response_data]
-            phones = [user['phone'] for user in response_data]
-            states = [user['status'] for user in response_data]
-            userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
-            conetxt={
-                "userdata":userdata
-            }
-            return render(request,"admin.html",conetxt)
+            try:
+                names = [user['name'] for user in response_data]
+                emails = [user['email'] for user in response_data]
+                phones = [user['phone'] for user in response_data]
+                states = [user['status'] for user in response_data]
+                userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                conetxt={
+                    "userdata":userdata
+                }
+                return render(request,"admin.html",conetxt)
+            except:
+                return render(request,"admin.html")
+        else:
+            return render(request,"admin.html")
     else:
         fastapi_url = f"http://{ip}:8001/getall/"
         response = requests.get(fastapi_url)
@@ -151,16 +190,20 @@ def admin(request):
             response_data = response.json()
             # print(response_data)
             # alldata=response_data["users"]
-            names = [user['name'] for user in response_data]
-            emails = [user['email'] for user in response_data]
-            phones = [user['phone'] for user in response_data]
-            states = [user['status'] for user in response_data]
-        userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
-        conetxt={
-            "userdata":userdata
-        }
-        return render(request,"admin.html",conetxt)
-     
+            try:
+                names = [user['name'] for user in response_data]
+                emails = [user['email'] for user in response_data]
+                phones = [user['phone'] for user in response_data]
+                states = [user['status'] for user in response_data]
+                userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                conetxt={
+                    "userdata":userdata
+                }
+                return render(request,"admin.html",conetxt)
+            except:
+                return render(request,"admin.html")
+        else:
+            return render(request,"admin.html")
 def login(request):
     if request.method == "POST":
         email = request.POST.get("email")

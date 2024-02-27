@@ -126,14 +126,46 @@ def otpgenerate(request):
     return render(request, 'home.html')
 
 def admin(request):
-    if request.method =="POST":
-        if request.POST.get("deleteuser") == "delete":
+    state_cookie = request.COOKIES.get('state')
+    print(state_cookie)
+    if state_cookie:
+        if request.method =="POST":
+            if request.POST.get("deleteuser") == "delete":
+                email = request.POST.get("email")
+                data = {
+                "email": email,
+                }
+                fastapi_url = f"http://{ip}:8001/deleteuser/"
+                response = requests.delete(fastapi_url, json=data)
+                fastapi_url = f"http://{ip}:8001/getall/"
+                response = requests.get(fastapi_url)
+                if response.status_code == 200:
+                    response_data = response.json()
+                    # print(response_data)
+                    # alldata=response_data["users"]
+                    try:
+                        names = [user['name'] for user in response_data]
+                        emails = [user['email'] for user in response_data]
+                        phones = [user['phone'] for user in response_data]
+                        states = [user['status'] for user in response_data]
+                        userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                        conetxt={
+                            "userdata":userdata
+                        }
+                        return render(request,"admin.html",conetxt)
+                    except:
+                        return render(request,"admin.html")
+                else:
+                    return render(request,"admin.html")
+        if request.method == "POST":
             email = request.POST.get("email")
+            statechange=request.POST.get("statechange")
             data = {
-            "email": email,
+                "email": email,
+                "status":statechange
             }
-            fastapi_url = f"http://{ip}:8001/deleteuser/"
-            response = requests.delete(fastapi_url, json=data)
+            fastapi_url = f"http://{ip}:8001/adminchange/"
+            response = requests.post(fastapi_url, json=data)
             fastapi_url = f"http://{ip}:8001/getall/"
             response = requests.get(fastapi_url)
             if response.status_code == 200:
@@ -154,56 +186,30 @@ def admin(request):
                     return render(request,"admin.html")
             else:
                 return render(request,"admin.html")
-    if request.method == "POST":
-        email = request.POST.get("email")
-        statechange=request.POST.get("statechange")
-        data = {
-            "email": email,
-            "status":statechange
-        }
-        fastapi_url = f"http://{ip}:8001/adminchange/"
-        response = requests.post(fastapi_url, json=data)
-        fastapi_url = f"http://{ip}:8001/getall/"
-        response = requests.get(fastapi_url)
-        if response.status_code == 200:
-            response_data = response.json()
-            # print(response_data)
-            # alldata=response_data["users"]
-            try:
-                names = [user['name'] for user in response_data]
-                emails = [user['email'] for user in response_data]
-                phones = [user['phone'] for user in response_data]
-                states = [user['status'] for user in response_data]
-                userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
-                conetxt={
-                    "userdata":userdata
-                }
-                return render(request,"admin.html",conetxt)
-            except:
-                return render(request,"admin.html")
         else:
-            return render(request,"admin.html")
+            fastapi_url = f"http://{ip}:8001/getall/"
+            response = requests.get(fastapi_url)
+            if response.status_code == 200:
+                response_data = response.json()
+                # print(response_data)
+                # alldata=response_data["users"]
+                try:
+                    names = [user['name'] for user in response_data]
+                    emails = [user['email'] for user in response_data]
+                    phones = [user['phone'] for user in response_data]
+                    states = [user['status'] for user in response_data]
+                    userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                    conetxt={
+                        "userdata":userdata
+                    }
+                    return render(request,"admin.html",conetxt)
+                except:
+                    return render(request,"admin.html")
+            else:
+                return render(request,"admin.html")
     else:
-        fastapi_url = f"http://{ip}:8001/getall/"
-        response = requests.get(fastapi_url)
-        if response.status_code == 200:
-            response_data = response.json()
-            # print(response_data)
-            # alldata=response_data["users"]
-            try:
-                names = [user['name'] for user in response_data]
-                emails = [user['email'] for user in response_data]
-                phones = [user['phone'] for user in response_data]
-                states = [user['status'] for user in response_data]
-                userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
-                conetxt={
-                    "userdata":userdata
-                }
-                return render(request,"admin.html",conetxt)
-            except:
-                return render(request,"admin.html")
-        else:
-            return render(request,"admin.html")
+        return redirect(login)
+       
 def login(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -218,12 +224,12 @@ def login(request):
             response_data = response.json()
             state = response_data.get("state")
             error = response_data.get("error")
+            print(state)
             if state:
-                context={
-                    "name":state,
-                    "email":email,
-                }
-                return redirect(admin)
+                response = redirect(admin)
+                response.set_cookie('state', state)
+                response.set_cookie('email', email)
+                return response
             else:
                  return render(request,'login.html',{"error":error}) 
     else:
@@ -283,4 +289,6 @@ def downloadcertificate(request):
             return render(request, 'admin_registration.html', {"error": f"Server returned status code {response.status_code}."})
     else:
         return render(request, 'admin_registration.html')
-       
+
+def contact(request):
+    return render(request,"contact.html")    

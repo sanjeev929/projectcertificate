@@ -7,7 +7,17 @@
     <title>User Information</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
 </head>
-<body>
+<body oncontextmenu="return false;">
+    <nav>
+        <ul>
+            <li><a href="/login/">Admin Login</a></li>
+            <li><a href="/contact/">Contact</a></li>
+            <li><a href="/logout/">Logout</a></li>
+        </ul>
+    </nav>
+    <marquee behavior="scroll" direction="left">
+        Remember to wear a mask in public spaces. Wash your hands frequently with soap and water. Maintain social distancing of at least 6 feet. Stay home if you feel unwell. Get vaccinated when eligible.
+    </marquee>
     <div class="tablecontainer">
         <h2>Administrator</h2>
         <table>

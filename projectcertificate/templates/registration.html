@@ -23,8 +23,9 @@
     </marquee>
     <details>
         <summary>Click to Reports of Cases</summary>
-            <label for="file">File upload progress:</label>
-            <progress id="file" max="100" value="50"></progress>
+            <label for="file">Total Cases:{{cases}}</label><br>
+            <label for="file">Positive Cases:{{positivecases}}</label>
+            <progress id="file" max="{{cases}}" value="{{positivecases}}"></progress>
     </details>
     
     <div class="container">

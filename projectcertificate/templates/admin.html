@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Information</title>
+    <link rel="icon" type="image/png" href="{% static 'image/logo1.png' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}">
 </head>
 <body oncontextmenu="return false;">
@@ -15,9 +16,16 @@
             <li><a href="/logout/">Logout</a></li>
         </ul>
     </nav>
+    <br> 
     <marquee behavior="scroll" direction="left">
-        Remember to wear a mask in public spaces. Wash your hands frequently with soap and water. Maintain social distancing of at least 6 feet. Stay home if you feel unwell. Get vaccinated when eligible.
+        Remember to wear a mask in public spaces. Wash your hands frequently with soap and water. Maintain social distancing of at least 6 feet. Stay home if you feel unwell. Get vaccinated when eligible. <span class="highlight">Avoid touching your face with unwashed hands.</span> Cover your mouth and nose with a tissue or your elbow when you cough or sneeze. Clean and disinfect frequently touched objects and surfaces daily. Follow guidelines provided by health authorities. Stay informed and stay safe!
     </marquee>
+    <details>
+        <summary>Click to Reports of Cases</summary>
+            <label for="file">Total Cases:{{cases}}</label><br>
+            <label for="file">Positive Cases:{{positivecases}}</label>
+            <progress id="file" max="{{cases}}" value="{{positivecases}}"></progress>
+    </details>
     <div class="tablecontainer">
         <h2>Administrator</h2>
         <table>

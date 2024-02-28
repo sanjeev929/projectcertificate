@@ -11,7 +11,31 @@ s.close()
 ip=ip_address
 # Create your views here.
 def registartion(request):
-    return render(request,'registration.html')
+    fastapi_url = f"http://{ip}:8001/getall/"
+    response = requests.get(fastapi_url)
+    if response.status_code == 200:
+        response_data = response.json()
+        # print(response_data)
+        # alldata=response_data["users"]
+        try:
+            states = [user['status'] for user in response_data]
+            truecount=0
+            for state in states:
+                if state == "true":
+                    truecount+=1
+            conetxt={
+                "cases":len(states),
+                "positivecases":truecount
+            }
+            return render(request,"registration.html",conetxt)
+        except:
+            conetxt={
+                "cases":"0",
+                "positivecases":"0"
+            }
+            return render(request,"registration.html")
+    else:
+        return render(request,'registration.html',conetxt)
 
 def verify_recaptcha(request):
     recaptcha_response = request.POST.get("recaptchaResponse")
@@ -127,7 +151,6 @@ def otpgenerate(request):
 
 def admin(request):
     state_cookie = request.COOKIES.get('state')
-    print(state_cookie)
     if state_cookie:
         if request.method =="POST":
             if request.POST.get("deleteuser") == "delete":
@@ -149,12 +172,23 @@ def admin(request):
                         phones = [user['phone'] for user in response_data]
                         states = [user['status'] for user in response_data]
                         userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                        states = [user['status'] for user in response_data]
+                        truecount=0
+                        for state in states:
+                            if state == "true":
+                                truecount+=1
                         conetxt={
-                            "userdata":userdata
+                            "userdata":userdata,
+                            "cases":len(states),
+                            "positivecases":truecount
                         }
                         return render(request,"admin.html",conetxt)
                     except:
-                        return render(request,"admin.html")
+                        context={
+                        "cases":"0",
+                        "positivecases":"0"
+                        }
+                        return render(request,"admin.html",context)
                 else:
                     return render(request,"admin.html")
         if request.method == "POST":
@@ -178,12 +212,23 @@ def admin(request):
                     phones = [user['phone'] for user in response_data]
                     states = [user['status'] for user in response_data]
                     userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                    states = [user['status'] for user in response_data]
+                    truecount=0
+                    for state in states:
+                        if state == "true":
+                            truecount+=1
                     conetxt={
-                        "userdata":userdata
+                        "userdata":userdata,
+                        "cases":len(states),
+                        "positivecases":truecount
                     }
                     return render(request,"admin.html",conetxt)
                 except:
-                    return render(request,"admin.html")
+                    context={
+                    "cases":"0",
+                    "positivecases":"0"
+                    }
+                    return render(request,"admin.html",context)
             else:
                 return render(request,"admin.html")
         else:
@@ -199,12 +244,23 @@ def admin(request):
                     phones = [user['phone'] for user in response_data]
                     states = [user['status'] for user in response_data]
                     userdata=sorted(zip(names,emails,phones,states),key=lambda x: x[0])
+                    states = [user['status'] for user in response_data]
+                    truecount=0
+                    for state in states:
+                        if state == "true":
+                            truecount+=1
                     conetxt={
-                        "userdata":userdata
+                        "userdata":userdata,
+                        "cases":len(states),
+                        "positivecases":truecount
                     }
                     return render(request,"admin.html",conetxt)
                 except:
-                    return render(request,"admin.html")
+                    context={
+                    "cases":"0",
+                    "positivecases":"0"
+                    }
+                    return render(request,"admin.html",context)
             else:
                 return render(request,"admin.html")
     else:
@@ -224,7 +280,6 @@ def login(request):
             response_data = response.json()
             state = response_data.get("state")
             error = response_data.get("error")
-            print(state)
             if state:
                 response = redirect(admin)
                 response.set_cookie('state', state)

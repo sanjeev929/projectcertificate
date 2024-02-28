@@ -265,7 +265,12 @@ def admin(request):
                 return render(request,"admin.html")
     else:
         return redirect(login)
-       
+def logout(request):
+    response = redirect(admin)
+    response.delete_cookie('state')
+    response.delete_cookie('email')
+    return response
+ 
 def login(request):
     if request.method == "POST":
         email = request.POST.get("email")
